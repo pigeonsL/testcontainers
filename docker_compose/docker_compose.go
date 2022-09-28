@@ -7,15 +7,13 @@ import (
 	"strings"
 )
 
-type rosContainer struct {
-	testcontainers.LocalDockerCompose
-}
+var compose *testcontainers.LocalDockerCompose
 
-func DockerCompose_Start() *rosContainer {
-	composeFilePaths := []string{"docker/docker-compose.yml"}
+func DockerComposeStart() {
+	composeFilePaths := []string{"resource/docker-compose.yml"}
 	identifier := strings.ToLower(uuid.New().String())
 
-	compose := testcontainers.NewLocalDockerCompose(composeFilePaths, identifier)
+	compose = testcontainers.NewLocalDockerCompose(composeFilePaths, identifier)
 	execError := compose.
 		WithCommand([]string{"up", "-d"}).
 		WithEnv(map[string]string{
@@ -26,16 +24,25 @@ func DockerCompose_Start() *rosContainer {
 	err := execError.Error
 	if err != nil {
 		println(fmt.Errorf("could not run compose file: %v - %v", composeFilePaths, err))
-		return nil
 	}
-	return &rosContainer{LocalDockerCompose: *compose}
 }
 
-func DockerCompose_Down(compose *rosContainer) {
+func DockerComposeDown() {
 	if compose != nil {
 		execError := compose.Down()
 		if execError.Error != nil {
-			_ = fmt.Errorf("failed when running: %v", execError.Command)
+			println(fmt.Errorf("failed when running: %v", execError.Command))
+		}
+	} else {
+		println("failed to down compose because compose is nil")
+	}
+}
+
+func DockerComposeRestart(containerName string) {
+	if compose != nil {
+		execError := compose.WithCommand([]string{"restart", containerName}).Invoke()
+		if execError.Error != nil {
+			println(fmt.Errorf("failed when running: %v", execError.Command))
 		}
 	}
 }
