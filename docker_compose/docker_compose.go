@@ -48,3 +48,14 @@ func DockerComposeRestart(serviceName string) {
 		println("failed to down compose because compose is nil")
 	}
 }
+
+func ShowDockerComposeService() {
+	if compose != nil {
+		execError := compose.WithCommand([]string{"ps"}).Invoke()
+		if execError.Error != nil {
+			println(fmt.Errorf("failed when running: %v", execError.Command))
+		}
+	} else {
+		println("failed to down compose because compose is nil")
+	}
+}

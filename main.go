@@ -9,13 +9,17 @@ import (
 
 func main() {
 	cmd.Execute()
-	var order, containerId string
+	var order, serviceName string
 	for true {
-		fmt.Println("There are the containers that have been started, Please choose whether you want to restart or exit the program：\n restart service \n exit")
-		fmt.Scanln(&order, &containerId)
-		if order == "restart" {
-			docker_compose.DockerComposeRestart(containerId)
-		} else if order == "exit" {
+		fmt.Println("There are the containers that have been started, Please choose whether you want to restart or exit the program：\n1.restart \n2.exit")
+		fmt.Print("Please input 1 or 2:")
+		fmt.Scanln(&order)
+		if order == "1" {
+			docker_compose.ShowDockerComposeService()
+			fmt.Print("Please enter the name of the service you want to restart: ")
+			fmt.Scanln(&serviceName)
+			docker_compose.DockerComposeRestart(serviceName)
+		} else if order == "2" {
 			docker_compose.DockerComposeDown()
 			os.Exit(1)
 		} else {
