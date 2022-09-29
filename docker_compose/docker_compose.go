@@ -16,10 +16,6 @@ func DockerComposeStart() {
 	compose = testcontainers.NewLocalDockerCompose(composeFilePaths, identifier)
 	execError := compose.
 		WithCommand([]string{"up", "-d"}).
-		WithEnv(map[string]string{
-			"key1": "value1",
-			"key2": "value2",
-		}).
 		Invoke()
 	err := execError.Error
 	if err != nil {
