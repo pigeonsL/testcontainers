@@ -28,16 +28,15 @@ func main() {
 	docker_compose.DockerComposeStart()
 	for true {
 		_, command, err := HomePageRun()
-
 		if err != nil {
-			fmt.Printf("Prompt failed %v\n", err)
+			fmt.Printf("HomePageRun failed %v\n", err)
 			return
 		}
 
 		if command == "restart" {
 			_, serviceName, err := RestartPageRun()
 			if err != nil {
-				fmt.Printf("Prompt failed %v\n", err)
+				fmt.Printf("RestartPageRun failed %v\n", err)
 				return
 			}
 			docker_compose.DockerComposeRestart(serviceName)
