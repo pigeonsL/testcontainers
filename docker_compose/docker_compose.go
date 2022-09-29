@@ -47,7 +47,7 @@ func DockerComposeRestart(serviceName string) {
 
 func ShowDockerComposeService() {
 	if compose != nil {
-		execError := compose.WithCommand([]string{"ps"}).Invoke()
+		execError := compose.WithCommand([]string{"ps", "-q"}).Invoke()
 		if execError.Error != nil {
 			println(fmt.Errorf("failed when running: %v", execError.Command))
 		}

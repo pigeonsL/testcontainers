@@ -2,29 +2,51 @@ package main
 
 import (
 	"fmt"
+	"github.com/manifoldco/promptui"
 	"os"
-	"testcontainers/cmd"
 	"testcontainers/docker_compose"
 )
 
+func HomePageRun() (int, string, error) {
+	prompt := promptui.Select{
+		Label: "Select command",
+		Items: []string{"restart", "exit"},
+	}
+
+	return prompt.Run()
+}
+
+func RestartPageRun() (int, string, error) {
+	service := promptui.Select{
+		Label: "Select you want restart service name",
+		Items: []string{"master", "talker", "listener"},
+	}
+	return service.Run()
+}
+
 func main() {
-	cmd.Execute()
-	var order, serviceName string
+	docker_compose.DockerComposeStart()
 	for true {
-		fmt.Println("There are the containers that have been started, Please choose whether you want to restart or exit the program：\n1.restart \n2.exit")
-		fmt.Print("Please enter 1 or 2: ")
-		fmt.Scanln(&order)
-		if order == "1" {
-			docker_compose.ShowDockerComposeService()
-			fmt.Print("Please enter the name of the service you want to restart: ")
-			fmt.Scanln(&serviceName)
-			// todo check serviceName
+		_, command, err := HomePageRun()
+
+		if err != nil {
+			fmt.Printf("Prompt failed %v\n", err)
+			return
+		}
+
+		if command == "restart" {
+			_, serviceName, err := RestartPageRun()
+			if err != nil {
+				fmt.Printf("Prompt failed %v\n", err)
+				return
+			}
 			docker_compose.DockerComposeRestart(serviceName)
-		} else if order == "2" {
+		}
+
+		if command == "exit" {
 			docker_compose.DockerComposeDown()
+			fmt.Println("The program has exited.")
 			os.Exit(1)
-		} else {
-			fmt.Println("Input error")
 		}
 	}
 }
