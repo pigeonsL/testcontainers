@@ -12,11 +12,11 @@ func HomePageRun() (int, string, error) {
 		Label: "Select command",
 		Items: []string{"restart", "exit"},
 	}
-
 	return prompt.Run()
 }
 
 func RestartPageRun() (int, string, error) {
+	// todo the service name should be read dynamically
 	service := promptui.Select{
 		Label: "Select you want restart service name",
 		Items: []string{"master", "talker", "listener"},
